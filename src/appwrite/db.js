@@ -14,7 +14,7 @@ export class DBService {
         this.storage = new Storage(this.client)
     }
 
-    async createPost({title, slug, content, featuredImage, status}) {
+    async createPost({title, slug, content, featuredImage, status, userId}) {
         try {
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId, 
@@ -24,7 +24,8 @@ export class DBService {
                     title, 
                     content, 
                     featuredImage, 
-                    status
+                    status,
+                    userId
                 }
             )
         } catch (error) {
@@ -74,14 +75,12 @@ export class DBService {
             return false
         }
     }
-    async getPosts() {
+    async getPosts(queries = [Query.equal("status", "active")]) {
         try {
             return await this.databases.getDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
-                [
-                    Query.equal("status", "active")
-                ]
+                queries
             )
         } catch (error) {
             console.log("Appwrite service :: getPosts :: error", error)
